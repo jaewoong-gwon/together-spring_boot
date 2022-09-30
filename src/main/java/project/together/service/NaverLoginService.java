@@ -123,21 +123,34 @@ public class NaverLoginService {
                 result.append(line);
             }
 
+            log.info(String.valueOf(result));
+
 
             String responseMessage = new JSONObject(String.valueOf(result)).getString("message");
 
             JSONObject userInfo = new JSONObject(String.valueOf(result)).getJSONObject("response");
             Servant user = new Servant();
             if (responseMessage.equals("success")) {
+                //ID 설정
                 user.setSerId(userInfo.getString("id"));
+                //Gender 설정
                 if (userInfo.getString("gender").equals("M")) user.setSerGender(0); //남자 1, 여자면 0
                 else user.setSerGender(1);
+                //이름 설정
+                user.setSerName(userInfo.getString("name"));
+                //Email 설정
                 user.setSerEmail(userInfo.getString("email"));
+                //Mobile 설정
                 user.setSerMobile(userInfo.getString("mobile"));
+                //Birth 설정
+//                Date birthday = new Date();
                 Date birthday = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyyddmm");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
                 birthday = format.parse(userInfo.getString("birthyear") + userInfo.getString("birthday").replace("-", ""));
                 user.setSerBirth(birthday);
+                //SNs설정
+                user.setSerSns("NAVER");
+
                 this.servant = user;
             }
 
@@ -145,6 +158,8 @@ public class NaverLoginService {
             if (servantDao.findById(servant.getSerId()) == null) {
                 //가입이 되어있지 않은 경우
                 servantDao.createServant(servant);
+            } else {
+                this.servant = servantDao.findById(user.getSerId());
             }
 
 

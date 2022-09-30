@@ -17,7 +17,7 @@ public class SessionManager {
     private Map<String,Object> sessionStore = new ConcurrentHashMap<>();
 
     //세션 생성.
-    public Cookie createSession(Object value, HttpServletResponse response){
+    public void createSession(Object value, HttpServletResponse response){
         //세션 id 생성.
         String sessionId = UUID.randomUUID().toString();
         //해당 값을 세션에 저장.
@@ -26,8 +26,7 @@ public class SessionManager {
 
         //생성한 세션 id로 쿠키 생성.
         Cookie sessionCookie = new Cookie(SESSION_COOKIE_NAME,sessionId);
-
-        return sessionCookie;
+        response.addCookie(sessionCookie);
     }
 
     //세션 조회
