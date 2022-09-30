@@ -13,6 +13,7 @@ public class Servant {
     private String serMobile;
     private int SerCumCoefficient; //누적 봉사 횟수
     private int serCumTime; // 누적 봉사 시간.
+    private String serEmail;
     private String serSns;
 
 }

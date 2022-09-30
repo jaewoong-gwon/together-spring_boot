@@ -14,7 +14,7 @@ public interface ServantDao {
     List<Servant>findAll();
 
     @Select("SELECT ser_id FROM Servant WHERE ser_id = #{serId}")
-    void findById(String serId);
+    Servant findById(String serId);
 
     @Insert("INSERT INTO Servant ser_id,ser_name,ser_birth,ser_gender,ser_mobile,ser_email " +
             "VALUES #{serId},#{serName},#{serBirth},#{serGender},#{serMobile},#{serEmail}")

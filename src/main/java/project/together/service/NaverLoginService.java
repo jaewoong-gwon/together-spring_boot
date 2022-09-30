@@ -1,36 +1,44 @@
 package project.together.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import project.together.dao.OrganizationDao;
 import project.together.dao.ServantDao;
 import project.together.dto.Organization;
+import project.together.dto.Servant;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 @Service
+@Getter
+@ToString
 public class NaverLoginService {
-
+    private Servant servant;
+    private Organization organization;
     private final ServantDao servantDao;
     private final OrganizationDao organizationDao;
 
     private final String clientId;
     private final String clientSecret;
 
-    public NaverLoginService( @Value("${spring.security.oauth2.client.registration.naver.client-id}")String clientId,
-                              @Value("${spring.security.oauth2.client.registration.naver.client-secret}")String clientSecret,
-                              ServantDao servantDao,OrganizationDao organizationDao){
+    public NaverLoginService(@Value("${spring.security.oauth2.client.registration.naver.client-id}") String clientId,
+                             @Value("${spring.security.oauth2.client.registration.naver.client-secret}") String clientSecret,
+                             ServantDao servantDao, OrganizationDao organizationDao) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.servantDao = servantDao;
-        this.organizationDao =organizationDao;
+        this.organizationDao = organizationDao;
     }
 
     //프론트 요청에서..
@@ -63,16 +71,13 @@ public class NaverLoginService {
             int responseCode = connection.getResponseCode();
             log.info("getToken responseCode : " + String.valueOf(responseCode));
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             String line = "";
             StringBuilder result = new StringBuilder();
 
             while ((line = br.readLine()) != null) {
                 result.append(line);
             }
-
-            log.info("getToken responseBody : " + result);
-
 
             //String type 만 생성시 초기화 가능.
             //String Builder 기 떄문에 다시 String 으로 바꿔줌. or result 또한 String 으로 선언 후 append 대신 += 이용.
@@ -92,7 +97,7 @@ public class NaverLoginService {
     }
 
     //access_token 을 이용한 사용자 정보 조회
-    public String getUserInfo(String access_Token) {
+    public Servant getUserInfo(String access_Token) {
         String requestURL = "https://openapi.naver.com/v1/nid/me";
 
         try {
@@ -104,12 +109,13 @@ public class NaverLoginService {
             //전송할 Header 작성.  Authorization = Bearer{access_Token}
             connection.setRequestProperty("Authorization", "Bearer " + access_Token);
 
+
             //응답코드 확인
             int responseCode = connection.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
+            log.info(String.valueOf(responseCode));
 
             //Resopnse 메세지 읽어오기.
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             String line = "";
             StringBuilder result = new StringBuilder();
 
@@ -117,16 +123,30 @@ public class NaverLoginService {
                 result.append(line);
             }
 
-            System.out.println("resopnse body : " + result);
 
             String responseMessage = new JSONObject(String.valueOf(result)).getString("message");
 
             JSONObject userInfo = new JSONObject(String.valueOf(result)).getJSONObject("response");
-
-            if(responseMessage.equals("success")){
+            Servant user = new Servant();
+            if (responseMessage.equals("success")) {
+                user.setSerId(userInfo.getString("id"));
+                if (userInfo.getString("gender").equals("M")) user.setSerGender(0); //남자 1, 여자면 0
+                else user.setSerGender(1);
+                user.setSerEmail(userInfo.getString("email"));
+                user.setSerMobile(userInfo.getString("mobile"));
+                Date birthday = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyyddmm");
+                birthday = format.parse(userInfo.getString("birthyear") + userInfo.getString("birthday").replace("-", ""));
+                user.setSerBirth(birthday);
+                this.servant = user;
             }
 
             br.close();
+            if (servantDao.findById(servant.getSerId()) == null) {
+                //가입이 되어있지 않은 경우
+                servantDao.createServant(servant);
+            }
+
 
             //이메일 유효 여부 확인 - 유효하다면 해당 정보 받아와서 DB 저장 + 로그인 완료
 
@@ -138,9 +158,9 @@ public class NaverLoginService {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
-        return "";
+        return servant;
     }
-
-
 }
