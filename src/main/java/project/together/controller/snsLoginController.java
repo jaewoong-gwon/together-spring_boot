@@ -2,6 +2,7 @@ package project.together.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -23,27 +25,20 @@ public class snsLoginController {
     private NaverLoginService naverLoginService;
     private SessionManager sessionManager;
 
-    @GetMapping("login/oauth2/code/naver")
-    public void login(@RequestParam String code, HttpServletResponse response, RedirectAttributes redirectAttributes) throws IOException {
-        //프론트에서 요청, 위의 경로로 리다이렉트 되면 인증 code 발급. 해당 코드로 Access_Token 발급 요청.
-        String access_Token = naverLoginService.getToken(code);
+    @PostMapping("/login/oauth2/access_token")
+    //content-type 설정해서 전송하기
+    public ResponseEntity<?>getUser(@RequestBody Map<String,String> access_token){
+        System.out.println(access_token);
+        JSONObject data = new JSONObject(access_token);
+        System.out.println(data);
+        return ResponseEntity.status(HttpStatus.OK).body("User");
+    }
+    @PostMapping("login/oauth2/code/naver")
+    public ResponseEntity<?> login(@RequestBody Map<String,Object> user, HttpServletResponse response) throws IOException {
+        JSONObject userInfo = new JSONObject(user);
+        naverLoginService.process(userInfo);
 
-        Servant user = naverLoginService.getUserInfo(access_Token);
-
-        String redirect_uri="http://183.104.217.115:3000";
-//        sessionManager.createSession(user,response);
-        redirectAttributes.addAttribute("user",user);
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.sendRedirect(redirect_uri);
-
+        return ResponseEntity.status(HttpStatus.OK).body("User");
     }
 
-    @GetMapping("")
-    public String check(@RequestParam String check){
-
-//        Servant servant = naverLoginService.getServant();
-//        log.info(servant.getSerName());
-//        naverLoginService.setCheck(check.get("check"));
-        return "";
-    }
 }
