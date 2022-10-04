@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.util.Date;
 
-//봉사 - 봉사 관련 정보
+//봉사 - 봉사 관련 정보 -> 게시판에 들어갈 정보
 @Data
 public class Volunteer {
     private int volId;

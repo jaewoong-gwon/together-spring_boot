@@ -17,5 +17,5 @@ public class Organization {
     private String orgManName;
     private Date orgManBirth;
     private int orgManGender;
-    private String ortManMobile;
+    private String orgManMobile;
 }

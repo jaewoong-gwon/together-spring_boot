@@ -1,21 +1,11 @@
 package project.together.controller;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import project.together.dto.Servant;
 import project.together.service.NaverLoginService;
-import project.together.service.SessionManager;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 @Slf4j
@@ -23,22 +13,20 @@ import java.util.Map;
 @AllArgsConstructor
 public class snsLoginController {
     private NaverLoginService naverLoginService;
-    private SessionManager sessionManager;
 
-    @PostMapping("/login/oauth2/access_token")
+    
+    //Get 으로 바꿀껏. -> naver redirect시 get 으로 넘어옴
+    @GetMapping("login/oauth2/code/naver")
     //content-type 설정해서 전송하기
-    public ResponseEntity<?>getUser(@RequestBody Map<String,String> access_token){
-        System.out.println(access_token);
-        JSONObject data = new JSONObject(access_token);
-        System.out.println(data);
-        return ResponseEntity.status(HttpStatus.OK).body("User");
-    }
-    @PostMapping("login/oauth2/code/naver")
-    public ResponseEntity<?> login(@RequestBody Map<String,Object> user, HttpServletResponse response) throws IOException {
-        JSONObject userInfo = new JSONObject(user);
-        naverLoginService.process(userInfo);
+    public ResponseEntity<?> login(@RequestParam Map<String,String> params) throws IOException {
+        System.out.println(params);
+        //access_token 받아와서 Naver 에 UserInfo 요청
+        return naverLoginService.getUserInfo(params.get("access_token"));
+        // getUserInfo()
+        // 1. access_token 을 통한 사용자 정보 요청
+        // 2. 받아온 사용자 정보를 통한 db 확인
+        // 3. db 확인후 적절한 response return.
 
-        return ResponseEntity.status(HttpStatus.OK).body("User");
     }
 
 }
