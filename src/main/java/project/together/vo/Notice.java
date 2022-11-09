@@ -1,4 +1,4 @@
-package project.together.dto;
+package project.together.vo;
 
 import lombok.Data;
 

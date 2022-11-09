@@ -1,12 +1,13 @@
-package project.together.dto;
+package project.together.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 //봉사 - 봉사 관련 정보 -> 게시판에 들어갈 정보
 @Data
-public class Volunteer {
+public class Volunteer implements Serializable {
     private int volId;
     private int volRecPersonnel; //모집 인원
     private Date volRecPeriod; //모집 기간
