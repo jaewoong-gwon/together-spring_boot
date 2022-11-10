@@ -1,7 +1,12 @@
 package project.together.util;
 
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
+import project.together.repository.OrganizationMapper;
+import project.together.repository.ServantMapper;
+import project.together.vo.Organization;
+import project.together.vo.Servant;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +15,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+@RequiredArgsConstructor
 @Component
-public class SnsUtil {
+public class UserUtil {
+    private final ServantMapper servantMapper;
+    private final OrganizationMapper organizationMapper;
 
     public JSONObject getUserInfo(JSONObject data) {
         String requestURL = "https://openapi.naver.com/v1/nid/me";
@@ -47,5 +55,14 @@ public class SnsUtil {
             throw new RuntimeException(e);
         }
         return userInfo;
+    }
+
+    // 봉사자 및 기관 관리자가 db에 존재하는지 체크
+    // 회원가입시에만 사용하여, 두 테이블에서 모두 NULL ( SELECT 결과가 NULL ) 일떄만 가입 처리.
+    public boolean userFlag(String id) {
+        Servant servant = servantMapper.findServantById(id);
+        Organization organization = organizationMapper.findOrganizationById(id);
+
+        return servant == null && organization == null;
     }
 }

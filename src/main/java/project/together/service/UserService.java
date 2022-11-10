@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.together.repository.OrganizationMapper;
 import project.together.repository.ServantMapper;
-import project.together.util.SnsUtil;
+import project.together.util.UserUtil;
 import project.together.vo.Organization;
 import project.together.vo.Servant;
 
@@ -19,11 +19,11 @@ import java.sql.Date;
 public class UserService {
     private final ServantMapper servantMapper;
     private final OrganizationMapper organizationMapper;
-    private final SnsUtil snsUtil;
+    private final UserUtil userUtil;
 
     public Object login(JSONObject loginInfo) {
-        JSONObject userInfo = snsUtil.getUserInfo(loginInfo);
-        log.info("login - userInfo : {}", userInfo);
+        JSONObject userInfo = userUtil.getUserInfo(loginInfo);
+        log.info("userLogin - userInfo : {}", userInfo);
         String loginType = loginInfo.getString("loginType");
 
         if (loginType.equals("ser")) {
@@ -36,10 +36,10 @@ public class UserService {
 
     @Transactional
     public Object signUp(JSONObject signUpInfo) {
-        JSONObject userInfo = snsUtil.getUserInfo(signUpInfo);
+        JSONObject userInfo = userUtil.getUserInfo(signUpInfo);
 
         String loginType = signUpInfo.getString("loginType");
-        boolean flag = flag(userInfo);
+        boolean flag = userUtil.userFlag(userInfo.getString("id"));
         log.info("flag : {}", flag);
         if (loginType.equals("ser") && flag) {
             Servant servant = servantMapper.findServantById(userInfo.getString("id"));
@@ -140,12 +140,4 @@ public class UserService {
         return null;
     }
 
-    // 봉사자 및 기관 관리자가 db에 존재하는지 체크
-    // 회원가입시에만 사용하여, 두 테이블에서 모두 NULL ( SELECT 결과가 NULL ) 일떄만 가입 처리.
-    public boolean flag(JSONObject userInfo) {
-        Servant servant = servantMapper.findServantById(userInfo.getString("id"));
-        Organization organization = organizationMapper.findOrganizationById(userInfo.getString("id"));
-
-        return servant == null && organization == null;
-    }
 }

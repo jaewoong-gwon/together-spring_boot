@@ -8,4 +8,10 @@
         WHERE (man_id = #{manId})
     </select>
 
+    <insert id="createManager" parameterType="Manager">
+        INSERT INTO Manager
+        VALUES (#{manId},#{manName},#{manMobile},#{manEmail},#{manSns})
+    </insert>
+
+
 </mapper>
