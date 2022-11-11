@@ -2,6 +2,7 @@ package project.together.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import project.together.vo.Organization;
 import project.together.vo.Servant;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -20,6 +22,13 @@ import java.util.List;
 public class testController {
 
     private final testService testService;
+
+    @GetMapping("/test/manager/login")
+    public ResponseEntity<?> test(Map<String, String> params) {
+        log.info("test : {}", params);
+        JSONObject info = new JSONObject(params);
+        return ResponseEntity.status(HttpStatus.OK).body("HELLO");
+    }
 
     @GetMapping("/test/find/servant")
     public ResponseEntity<Servant> findUser(Servant user) {

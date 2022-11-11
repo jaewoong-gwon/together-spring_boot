@@ -4,7 +4,7 @@
 <mapper namespace="project.together.repository.NoticeMapper">
 
     <select id="findAllNotice" resultType="map">
-        SELECT * FROM Notice
+        SELECT * FROM Notice ORDER BY not_wri_time
     </select>
 
     <select id="findNoticeById" parameterType="Integer" resultType="Notice">
@@ -14,11 +14,11 @@
 
     <insert id="createNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="notId">
         INSERT INTO Notice
-        VALUES (#{notWriter},#{notWriTime},#{notTitle},#{notContent})
+        VALUES (#{notId},#{notWriter},#{notWriTime},#{notTitle},#{notContent})
     </insert>
 
     <update id="updateNotice" parameterType="Notice">
-        UPDATE Notice SET not_title = #{notTitle} AND not_content = #{notContent} WHERE not_id = #{notId}
+        UPDATE Notice SET not_title = #{notTitle},not_content = #{notContent} WHERE not_id = #{notId}
     </update>
 
     <delete id="deleteNoticeById" parameterType="Integer">

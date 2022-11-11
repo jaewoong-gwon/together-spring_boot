@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import project.together.repository.NoticeMapper;
 import project.together.repository.OrganizationMapper;
 import project.together.repository.ServantMapper;
 import project.together.util.UserUtil;
+import project.together.vo.Notice;
 import project.together.vo.Organization;
 import project.together.vo.Servant;
 
 import java.sql.Date;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ import java.sql.Date;
 public class UserService {
     private final ServantMapper servantMapper;
     private final OrganizationMapper organizationMapper;
+    private final NoticeMapper noticeMapper;
     private final UserUtil userUtil;
 
     public Object login(JSONObject loginInfo) {
@@ -126,18 +130,27 @@ public class UserService {
         }
         return null;
     }
-        /*
-            Error 를 핸들링할 클래스가 있으면 좋을것 같음
-            Enum 으로 error type 선언.
-            해당 type 에 따라 설정된 메세지 지정.
-         */
 
+    /*
+        Error 를 핸들링할 클래스가 있으면 좋을것 같음
+        Enum 으로 error type 선언.
+        해당 type 에 따라 설정된 메세지 지정.
+     */
     @Transactional
     public Organization signUpOrganization(Organization organization) {
         organization.setOrgCertified(0);
         if (organizationMapper.createOrganization(organization) > 0) return organization;
 
         return null;
+    }
+
+    public List<Notice> findAllNotice() {
+        return noticeMapper.findAllNotice();
+    }
+
+    public Notice findNoticeById(Notice notice) {
+        log.info("findNoticeById : {}", notice);
+        return noticeMapper.findNoticeById(notice.getNotId());
     }
 
 }

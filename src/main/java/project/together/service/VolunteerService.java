@@ -17,12 +17,13 @@ public class VolunteerService {
 
     @Transactional
     public Volunteer createVolunteer(Volunteer volunteer) {
-        log.info("createVolunteer : {}", volunteer);
+
         /*
             not null 을 대비하여, 초기화 해도 되는 값의 경우 0 으로 초기화
             ex ) 현재 모집 인원 등..
          */
         volunteer.setVolCurNumber(0);
+        log.info("createVolunteer : {}", volunteer);
         int result = volunteerMapper.createVolunteer(volunteer);
 
         Volunteer resVolunteer = volunteerMapper.findVolunteerById(volunteer.getVolId());

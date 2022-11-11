@@ -3,8 +3,25 @@
 
 <mapper namespace="project.together.repository.VolunteerMapper">
 
-    <select id="findAllVolunteer" resultType="map">
-        SELECT * FROM Volunteer;
+    <resultMap id="baseResultMap" type="Volunteer">
+        <id column="vol_id" property="volId"/>
+        <result column="vol_organization" property="volOrganization"/>
+        <result column="vol_rec_personnel" property="volRecPersonnel"/>
+        <result column="vol_rec_period" property="volRecPeriod"/>
+        <result column="vol_type" property="volType"/>
+        <result column="vol_cur_number" property="volCurNumber"/>
+        <result column="vol_location" property="volLocation"/>
+        <result column="vol_st_time" property="volStTime"/>
+        <result column="vol_end_time" property="volEndTime"/>
+        <result column="vol_title" property="volTitle"/>
+        <result column="vol_content" property="volContent"/>
+        <association property="orgName" column="org_id" javaType="String">
+            <result property="orgName" column="org_name"/>
+        </association>
+    </resultMap>
+
+    <select id="findAllVolunteer" resultMap="baseResultMap">
+        SELECT v.*,o.org_name FROM Volunteer AS v INNER JOIN Organization AS o ON v.vol_organization = o.org_id ORDER BY vol_rec_period
     </select>
 
     <select id="findVolunteerById" parameterType="Integer" resultType="Volunteer">

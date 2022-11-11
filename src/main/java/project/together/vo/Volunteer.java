@@ -23,4 +23,5 @@ public class Volunteer implements Serializable {
     private Date volEndTime; //봉사 종료 시간
     private String volTitle; //제목
     private String volContent; // 본문
+    private String orgName;
 }

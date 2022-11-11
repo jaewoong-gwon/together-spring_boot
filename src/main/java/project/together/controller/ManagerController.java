@@ -10,8 +10,6 @@ import project.together.service.ManagerService;
 import project.together.vo.Manager;
 import project.together.vo.Notice;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -21,7 +19,7 @@ public class ManagerController {
 
     @PostMapping("/manager/start")
     public ResponseEntity<Manager> singUpAndLogin(@RequestBody String accessToken) {
-        log.info("signUpAndLogin : {}", accessToken);
+        log.info("ManagerSignUpAndLogin : {}", accessToken);
         JSONObject info = new JSONObject(accessToken);
 
         Manager manager = managerService.signUpAndLogin(info);
@@ -37,18 +35,6 @@ public class ManagerController {
         else return ResponseEntity.status(HttpStatus.OK).body(resNotice);
     }
 
-    @GetMapping("/manager/find/all/notice")
-    public ResponseEntity<List<Notice>> findAllNotice() {
-        return ResponseEntity.status(HttpStatus.OK).body(managerService.findAllNotice());
-    }
-
-    @GetMapping("/manager/find/notice")
-    public ResponseEntity<Notice> findNoticeById(Notice notice) {
-        log.info("findNoticeById : {}", notice);
-        Notice resNotice = managerService.findNoticeById(notice);
-        if (resNotice == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        else return ResponseEntity.status(HttpStatus.OK).body(resNotice);
-    }
 
     @GetMapping("/manager/update/notice")
     public ResponseEntity<Notice> updateNotice(Notice notice) {
@@ -64,4 +50,5 @@ public class ManagerController {
         if (managerService.deleteNoticeById(notice) > 0) return ResponseEntity.status(HttpStatus.OK).body("삭제성공");
         else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id 값이 유효하지 않음!");
     }
+
 }

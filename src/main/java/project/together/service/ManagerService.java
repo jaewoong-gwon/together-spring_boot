@@ -11,8 +11,6 @@ import project.together.util.UserUtil;
 import project.together.vo.Manager;
 import project.together.vo.Notice;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -27,7 +25,7 @@ public class ManagerService {
 
         log.info("managerSingUpAndLogin - userInfo : {}", userInfo);
         Manager manager = managerMapper.findManagerById(userInfo.getString("id"));
-        boolean flag = userUtil.userFlag(info.getString("id"));
+        boolean flag = userUtil.userFlag(userInfo.getString("id"));
             /*
                  null : 회원가입 진행
                 not null : 로그인 진행
@@ -51,17 +49,9 @@ public class ManagerService {
         } else return manager;
     }
 
-    public List<Notice> findAllNotice() {
-        return noticeMapper.findAllNotice();
-    }
-
-    public Notice findNoticeById(Notice notice) {
-        log.info("findNoticeById : {}", notice);
-        return noticeMapper.findNoticeById(notice.getNotId());
-    }
-
     @Transactional
     public Notice createNotice(Notice notice) {
+        notice.setNotId(0);
         log.info("createNotice : {}", notice);
         if (noticeMapper.createNotice(notice) > 0) return noticeMapper.findNoticeById(notice.getNotId());
         else return null;

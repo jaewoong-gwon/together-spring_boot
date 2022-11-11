@@ -1,6 +1,7 @@
 package project.together.vo;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 public class Notice {
     private int notId;
     private String notWriter;
+    @DateTimeFormat(pattern = "yyyy-MM-dd-HH-mm")
     private Date notWriTime; //작성시간
     private String notTitle;
     private String notContent;
