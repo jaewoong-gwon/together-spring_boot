@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="project.together.repository.ServantMapper">
+
+    <select id="findServantById" parameterType="String" resultType="Servant">
+        SELECT * FROM Servant WHERE (ser_id = #{serId})
+    </select>
+
+    <select id="findAllServant" resultType="Servant">
+        SELECT * FROM Servant;
+    </select>
+
+    <insert id="createServant" parameterType="Servant">
+        INSERT INTO Servant
+        (ser_id,ser_name,ser_birth,ser_gender,ser_mobile,ser_email,ser_sns)
+        VALUES( #{serId}, #{serName}, #{serBirth},#{serGender},#{serMobile},#{serEmail},#{serSns})
+    </insert>
+
+    <delete id="deleteServantById" parameterType="String">
+        DELETE FROM Servant
+        WHERE (ser_id = #{serId})
+    </delete>
+
+
+</mapper>
