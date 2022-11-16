@@ -9,7 +9,7 @@ import java.util.Date;
 //공지사항 테이블
 @Data
 public class Notice {
-    private int notId;
+    private Integer notId;
     private String notWriter;
     @DateTimeFormat(pattern = "yyyy-MM-dd-HH-mm")
     private Date notWriTime; //작성시간

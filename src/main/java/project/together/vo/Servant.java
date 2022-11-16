@@ -19,6 +19,4 @@ public class Servant {
     private Integer serCumCoefficient; //누적 봉사 횟수
     private Time serCumTime; // 누적 봉사 시간.
     private String serSns;
-
-
 }

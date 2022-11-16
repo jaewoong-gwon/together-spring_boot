@@ -13,6 +13,8 @@ public interface OrganizationMapper {
 
     int createOrganization(Organization organization);
 
+    int certificateOrganization(Organization organization);
+
     int deleteOrganizationById(String ordId);
 }
 

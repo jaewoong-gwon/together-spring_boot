@@ -18,20 +18,75 @@
         <association property="orgName" column="org_id" javaType="String">
             <result property="orgName" column="org_name"/>
         </association>
+        <collection property="appList" ofType="Application">
+            <id property="volId" column="app_vol_id"/>
+            <id property="serId" column="app_ser_id"/>
+        </collection>
     </resultMap>
 
-    <select id="findAllVolunteer" resultMap="baseResultMap">
-        SELECT v.*,o.org_name FROM Volunteer AS v INNER JOIN Organization AS o ON v.vol_organization = o.org_id ORDER BY vol_rec_period
+
+    <resultMap id="AddServantResultMap" type="Volunteer">
+        <id column="vol_id" property="volId"/>
+        <result column="vol_organization" property="volOrganization"/>
+        <result column="vol_rec_personnel" property="volRecPersonnel"/>
+        <result column="vol_rec_period" property="volRecPeriod"/>
+        <result column="vol_type" property="volType"/>
+        <result column="vol_cur_number" property="volCurNumber"/>
+        <result column="vol_location" property="volLocation"/>
+        <result column="vol_st_time" property="volStTime"/>
+        <result column="vol_end_time" property="volEndTime"/>
+        <result column="vol_title" property="volTitle"/>
+        <result column="vol_content" property="volContent"/>
+            <association property="orgName" column="org_id" javaType="String">
+             <result property="orgName" column="org_name"/>
+            </association>
+        <collection property="appList" ofType="Application">
+            <id property="volId" column="app_vol_id"/>
+            <id property="serId" column="app_ser_id"/>
+            <association property="servant" column="ser_id" javaType="Servant">
+                <result property="serName" column="ser_name"/>
+                <result property="serBirth" column="ser_birth"/>
+                <result property="serGender" column="ser_gender"/>
+                <result property="serMobile" column="ser_mobile"/>
+                <result property="serEmail" column="ser_email"/>
+                <result property="serCumCoefficient" column="ser_cum_coefficient"/>
+                <result property="serCumTime" column="ser_cum_time"/>
+            </association>
+        </collection>
+    </resultMap>
+    
+    <select id="findAllVolunteer" parameterType="Volunteer" resultMap="baseResultMap">
+        SELECT * FROM Volunteer_Main WHERE 1 = 1
+        <if test="orgName != null">
+            AND org_name = #{orgName}
+        </if>
+        <if test="volTitle != null">
+            AND vol_title = #{volTitle}
+        </if>
+        <if test="volType != null">
+            AND vol_type = #{volType}
+        </if>
+        ORDER BY vol_rec_period DESC
+    </select>
+    <!-- 신청 가능한 봉사만 전달 -->
+
+    <!-- 완료된 봉사 -->
+
+    <!-- 봉사 검색 -->
+    <select id="searchVolunteers" parameterType="Volunteer" resultMap="baseResultMap">
+        SELECT * FROM Volunteer_Main
     </select>
 
-    <select id="findVolunteerById" parameterType="Integer" resultType="Volunteer">
-        SELECT * FROM Volunteer WHERE vol_id = #{volId}
+    <select id="findVolunteerById" parameterType="Integer" resultMap="baseResultMap">
+        SELECT * FROM Volunteer_Main WHERE vol_id = #{volId}
     </select>
 
-    <select id="findVolunteerCurNumber" parameterType="Integer" resultType="Integer">
-        SELECT vol_cur_number
-        FROM Volunteer
-        WHERE vol_id = #{volId}
+    <select id="findAllApplicatedVolunteerByServantId" parameterType="String" resultMap="baseResultMap">
+        Select * From Volunteer_Main WHERE app_ser_id = #{serId}
+    </select>
+
+    <select id="findVolunteerAddServant" parameterType="String" resultMap="AddServantResultMap">
+        SELECT * FROM Volunteer_For_Organization WHERE vol_organization = #{orgId}
     </select>
 
     <insert id="createVolunteer" parameterType="Volunteer" useGeneratedKeys="true" keyProperty="volId">
@@ -45,7 +100,17 @@
     </update>
 
     <delete id="deleteVolunteerById" parameterType="Integer">
-        DELETE FROM Volunteer SET vol_id = #{volId}
+        DELETE FROM Volunteer WHERE vol_id = #{volId}
     </delete>
 
+    <!--
+        Application 테이블 관련
+    -->
+    <insert id="createApplication" parameterType="Application">
+        INSERT INTO Application VALUES ( #{serId},#{volId} )
+    </insert>
+
+    <delete id="deleteApplication" parameterType="Application">
+        DELETE FROM Application WHERE app_ser_id = #{serId} AND app_vol_id = #{volId}
+    </delete>
 </mapper>

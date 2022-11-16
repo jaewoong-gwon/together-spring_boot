@@ -7,14 +7,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.together.repository.ManagerMapper;
 import project.together.repository.NoticeMapper;
+import project.together.repository.OrganizationMapper;
+import project.together.repository.ServantMapper;
 import project.together.util.UserUtil;
 import project.together.vo.Manager;
 import project.together.vo.Notice;
+import project.together.vo.Organization;
+import project.together.vo.Servant;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class ManagerService {
+    private final ServantMapper servantMapper;
+    private final OrganizationMapper organizationMapper;
     private final ManagerMapper managerMapper;
     private final NoticeMapper noticeMapper;
     private final UserUtil userUtil;
@@ -68,6 +78,27 @@ public class ManagerService {
     public Integer deleteNoticeById(Notice notice) {
         log.info("deleteNoticeById : {}", notice);
         return noticeMapper.deleteNoticeById(notice.getNotId());
+    }
+
+    public Notice findNoticeById(Notice notice) {
+        return noticeMapper.findNoticeById(notice.getNotId());
+    }
+
+    public Map<String, Object> findAllUsers() {
+        List<Servant> servantList = servantMapper.findAllServant();
+        log.info("servantList : {}", servantList);
+        List<Organization> organizationList = organizationMapper.findAllOrganization();
+        log.info("organizationList : {}", organizationList);
+        Map<String, Object> response = new HashMap<>();
+        response.put("servant", servantList);
+        response.put("organization", organizationList);
+
+        return response;
+    }
+
+    public int certificateOrganization(Organization organization) {
+        log.info("certificateOrganization : {}", organization);
+        return organizationMapper.certificateOrganization(organization);
     }
 
 

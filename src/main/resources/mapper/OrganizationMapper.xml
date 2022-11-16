@@ -8,7 +8,7 @@
         WHERE ( org_id = #{orgId} )
     </select>
 
-    <select id="findAllOrganization" resultType="map">
+    <select id="findAllOrganization" resultType="Organization">
         SELECT * FROM Organization
     </select>
 
@@ -17,6 +17,10 @@
         VALUES (#{orgId},#{orgName},#{orgMobile},#{orgCertified},#{orgEmail},#{orgType},#{orgAddress},
         #{orgManName},#{orgManBirth},#{orgManGender},#{orgSns},#{orgManMobile})
     </insert>
+
+    <update id="certificateOrganization" parameterType="Organization">
+        UPDATE Organization SET org_certified = #{orgCertified} WHERE org_id = #{orgId}
+    </update>
 
 
     <delete id="deleteOrganizationById" parameterType="String">

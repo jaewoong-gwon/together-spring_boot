@@ -7,8 +7,8 @@
         SELECT * FROM Servant WHERE (ser_id = #{serId})
     </select>
 
-    <select id="findAllServant" resultType="map">
-        SELECT * FROM Servant
+    <select id="findAllServant" resultType="Servant">
+        SELECT * FROM Servant;
     </select>
 
     <insert id="createServant" parameterType="Servant">
@@ -21,5 +21,6 @@
         DELETE FROM Servant
         WHERE (ser_id = #{serId})
     </delete>
+
 
 </mapper>

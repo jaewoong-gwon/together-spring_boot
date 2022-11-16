@@ -3,7 +3,7 @@
 
 <mapper namespace="project.together.repository.NoticeMapper">
 
-    <select id="findAllNotice" resultType="map">
+    <select id="findAllNotice" resultType="Notice">
         SELECT * FROM Notice ORDER BY not_wri_time
     </select>
 
