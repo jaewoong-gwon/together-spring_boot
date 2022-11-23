@@ -80,9 +80,13 @@ public class VolunteerController {
     public ResponseEntity<?> createApplication(Application application) {
         log.info("createApplication : {}", application);
 
+        Volunteer volunteer = new Volunteer();
+        volunteer.setVolId(application.getVolId());
+        Volunteer newVol = volunteerService.findVolunteerById(volunteer);
+
         if (volunteerService.createApplication(application) > 0) {
             return ResponseEntity.status(HttpStatus.OK).body("신청 완료");
-        } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id 값이 유효하지 않습니다!");
+        } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(newVol.getVolTitle() + "는 이미 신청되었습니다");
     }
 
     @GetMapping("delete/application")

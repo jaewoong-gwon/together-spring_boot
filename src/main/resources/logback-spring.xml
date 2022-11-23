@@ -14,7 +14,6 @@
         </layout>
     </appender>
 
-
     <!-- log root 레벨 성정 (logging.level.root = debug) -->
     <root level="info">
         <!-- 참조할 appender 설정 CONSOLE -->

@@ -17,7 +17,6 @@ import project.together.vo.Organization;
 @RestController
 @RequestMapping("/together")
 public class ManagerController {
-
     @Autowired
     private final ManagerService managerService;
 
@@ -38,7 +37,6 @@ public class ManagerController {
         if (resNotice == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         else return ResponseEntity.status(HttpStatus.OK).body(resNotice);
     }
-
 
     @GetMapping("/manager/update/notice")
     public ResponseEntity<Notice> updateNotice(Notice notice) {

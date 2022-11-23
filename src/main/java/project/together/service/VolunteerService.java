@@ -86,7 +86,13 @@ public class VolunteerService {
              1. 명시적으로 지정한 경우 : 지정한 숫자로 변경
              2. 지정 하지 않은 경우 : 봉사자가 봉사 신청 요청의 경우로, 현재 신청인원을 가져와서 + 1
          */
-        int result = volunteerMapper.createApplication(application);
+        int result = 0;
+        try {
+            result = volunteerMapper.createApplication(application);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+
         if (result > 0) {
             Volunteer volunteer = volunteerMapper.findVolunteerById(application.getVolId());
             volunteer.setVolCurNumber(volunteer.getVolCurNumber() + 1);
@@ -97,7 +103,12 @@ public class VolunteerService {
     @Transactional
     public int deleteApplication(Application application) {
         log.info("deleteApplication : {}", application);
-        return volunteerMapper.deleteApplication(application);
+        if (volunteerMapper.deleteApplication(application) > 0) {
+            int volId = application.getVolId();
+            Volunteer volunteer = volunteerMapper.findVolunteerById(volId);
+            volunteer.setVolCurNumber(volunteer.getVolCurNumber() - 1);
+            return volunteerMapper.updateVolCurNumberById(volunteer);
+        } else return 0;
     }
 
     public boolean nullCheck(String str) {
