@@ -8,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import project.together.repository.NoticeMapper;
 import project.together.repository.OrganizationMapper;
 import project.together.repository.ServantMapper;
+import project.together.util.MailSenderUtil;
 import project.together.util.UserUtil;
+import project.together.vo.Mail;
 import project.together.vo.Notice;
 import project.together.vo.Organization;
 import project.together.vo.Servant;
 
+import javax.mail.MessagingException;
 import java.sql.Date;
 import java.util.List;
 
@@ -24,6 +27,7 @@ public class UserService {
     private final OrganizationMapper organizationMapper;
     private final NoticeMapper noticeMapper;
     private final UserUtil userUtil;
+    private final MailSenderUtil mailSender;
 
     public Object login(JSONObject loginInfo) {
         JSONObject userInfo = userUtil.getUserInfo(loginInfo);
@@ -124,6 +128,15 @@ public class UserService {
                 //sns 설정
                 organization.setOrgSns("NAVER");
 
+                Mail mail = new Mail("wjdwnsdnjs13@naver.com", "[안내] 새로운 기관 회원가입", "새로운 기관이" +
+                        "회원가입 했습니다. 확인 후 승인해주시면 됩니다.");
+                try {
+                    mailSender.sendMail(mail);
+                } catch (MessagingException error) {
+                    log.info("{}", error.getMessage());
+                }
+
+
                 return organization;
 
             }
@@ -152,6 +165,4 @@ public class UserService {
         log.info("findNoticeById : {}", notice);
         return noticeMapper.findNoticeById(notice.getNotId());
     }
-
-
 }

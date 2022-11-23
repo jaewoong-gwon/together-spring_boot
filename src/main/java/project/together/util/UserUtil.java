@@ -65,4 +65,6 @@ public class UserUtil {
 
         return servant == null && organization == null;
     }
+
+
 }

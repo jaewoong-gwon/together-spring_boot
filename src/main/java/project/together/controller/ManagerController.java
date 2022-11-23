@@ -72,4 +72,5 @@ public class ManagerController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("id 값이 유효하지 않음");
     }
 
+
 }

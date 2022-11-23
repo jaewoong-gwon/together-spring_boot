@@ -56,5 +56,4 @@ public class UserController {
         if (resNotice == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         else return ResponseEntity.status(HttpStatus.OK).body(resNotice);
     }
-
 }
